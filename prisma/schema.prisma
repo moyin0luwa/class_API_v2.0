@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Room {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  subject   String @unique
+  student Student[] 
+  teacher Teacher?
+  teacherId String @unique @db.ObjectId
+}
+
+model Student {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  age    Int
+  gender String
+  subjectdesired String
+  roomid String @db.ObjectId
+  room Room @relation(fields: [roomid], references: [id], onDelete: Cascade)
+}
+
+model Teacher {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  age    Int
+  gender String
+  roomid String @db.ObjectId @unique
+  room Room @relation(fields: [roomid], references: [id])
+}
